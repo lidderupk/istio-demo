@@ -23,7 +23,7 @@ spec:
       # of the source.
       - dimensions:
           destination: productpage
-        maxAmount: 2
+        maxAmount: 6
         validDuration: 5s
 ---
 apiVersion: config.istio.io/v1alpha2

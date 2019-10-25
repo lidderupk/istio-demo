@@ -29,3 +29,37 @@ spec:
   - handler: whitelist
     instances: [ appversion ]
 ---
+apiVersion: config.istio.io/v1alpha2
+kind: handler
+metadata:
+  name: whitelist
+  namespace: istio-system
+spec:
+  compiledAdapter: listchecker
+  params:
+    # providerUrl: ordinarily black and white lists are maintained
+    # externally and fetched asynchronously using the providerUrl.
+    overrides: ["v1", "v2"]  # overrides provide a static list
+    blacklist: false
+---
+apiVersion: config.istio.io/v1alpha2
+kind: instance
+metadata:
+  name: appversion
+  namespace: istio-system
+spec:
+  compiledTemplate: listentry
+  params:
+    value: source.labels["version"]
+---
+apiVersion: config.istio.io/v1alpha2
+kind: rule
+metadata:
+  name: checkversion
+  namespace: istio-system
+spec:
+  match: destination.labels["app"] == "ratings"
+  actions:
+  - handler: whitelist
+    instances: [ appversion ]
+---
